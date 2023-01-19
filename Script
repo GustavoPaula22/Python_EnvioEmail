@@ -1,0 +1,43 @@
+import smtplib
+from builtins import print
+import datetime
+import calendar
+from email.message import EmailMessage
+
+# Pergar datas
+data_atual = datetime.date.today()
+print(data_atual)
+
+def primeiro_dia():
+    if data_atual.month == 1:
+        x = data_atual.replace(data_atual.year - 1, 12, 1)
+    else:
+        x = data_atual.replace(data_atual.year, data_atual.month - 1, 1)
+    return x
+print(primeiro_dia())
+
+def ultimo_dia():
+    if data_atual.month == 1:
+        x = data_atual.replace(data_atual.year - 1, 12, calendar.monthrange(data_atual.year, data_atual.month)[1])
+    else:
+        x = data_atual.replace(data_atual.year, data_atual.month - 1, calendar.monthrange(data_atual.year, data_atual.month)[1])
+    return x
+print(ultimo_dia())
+
+# Cria a mensagem
+msg = EmailMessage()
+msg['Subject'] = 'titulo do email'
+msg['From'] = 'conta que enviara o email: envio@empresa.com.br'
+msg['To'] = 'contas a receber o email: conta1@gmail.com, conta2@hotmail.com'
+msg.set_content(f'mensagem do corpo do email nesse caso colocando informações de datas do mese anterior: {primeiro_dia().day}/{primeiro_dia().month}/{primeiro_dia().year} há {ultimo_dia().day}/{ultimo_dia().month}/{ultimo_dia().year}')
+
+# Abre o arquivo CSV como um fluxo de bytes
+with open(r"anexa arquivos no email como um word ou excel", 'coloca um nome nesse arquivo anexado') as arquivo:
+    # Adiciona o anexo à mensagem
+    msg.add_attachment(arquivo.read(), maintype='text', subtype='csv', filename='Relatorio.csv')
+
+# Envia o email
+smtp_server = smtplib.SMTP_SSL('servidor smtp que você utiliza', 'porta do servidor')
+smtp_server.login('email de login', 'senha de login')
+smtp_server.send_message(msg)
+smtp_server.close()
